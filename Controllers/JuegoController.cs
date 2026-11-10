@@ -1,21 +1,28 @@
-﻿using GameVault.Models;
+﻿using GameVault.Data;
+using GameVault.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameVault.Controllers
 {
     public class JuegoController : Controller
     {
-        private static List<Videojuego> _catalogo = new List<Videojuego>
+        private readonly ApplicationDbContext _context;
+
+        public JuegoController(ApplicationDbContext context)
         {
-            new Videojuego (1,"Hollow Knight","Metroidvania","PC/SWITCH/XBOX/PS",25000,2017)
-        };
+            _context = context;
+        }
 
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            //mandar el catalogo
-            return View(_catalogo);
+            //mandar el listado de videojuegos desde la base de datos
+            var catalogo = await _context.Videojuegos.ToListAsync();
+
+            return View(catalogo);
         }
+
 
         [HttpGet]
         public IActionResult Crear()
@@ -25,22 +32,24 @@ namespace GameVault.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Crear(Videojuego nuevoJuego)
+        public async Task<IActionResult> Crear(Videojuego nuevoJuego)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                nuevoJuego.Id = _catalogo.Count + 1;
-                _catalogo.Add(nuevoJuego);
-                return RedirectToAction(nameof(Index));
+                return View(nuevoJuego);
             }
-            return View(nuevoJuego);
+
+            _context.Videojuegos.Add(nuevoJuego);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
             
         }
 
         [HttpGet]
-        public IActionResult Editar(int Id)
+        public async Task<IActionResult> Editar(int Id)
         {
-            var juego = _catalogo.FirstOrDefault(c => c.Id == Id);
+            var juego = await _context.Videojuegos.FindAsync(Id);
             if (juego == null)
             {
                 return NotFound();
@@ -51,7 +60,7 @@ namespace GameVault.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Editar(Videojuego nuevoJuego)
+        public async Task<ActionResult> Editar(Videojuego nuevoJuego)
         {
             if (!ModelState.IsValid)
             {
@@ -59,30 +68,23 @@ namespace GameVault.Controllers
 
             }
 
-            var juegoExistente = _catalogo.FirstOrDefault(c => c.Id == nuevoJuego.Id);
-
-            if (juegoExistente != null)
-            {
-                juegoExistente.Titulo = nuevoJuego.Titulo;
-                juegoExistente.Genero = nuevoJuego.Genero;
-                juegoExistente.Plataforma = nuevoJuego.Plataforma;
-                juegoExistente.Precio = nuevoJuego.Precio;
-                juegoExistente.Year = nuevoJuego.Year;
-
-            }
+            _context.Update(nuevoJuego);
+            await _context.SaveChangesAsync();
 
             return RedirectToAction("Index");
 
         }
 
         [HttpGet]
-        public IActionResult Eliminar(int Id)
+        public async Task<IActionResult> Eliminar(int Id)
         {
-            var juego = _catalogo.FirstOrDefault(c => c.Id == Id);
-            if (juego != null)
+            var juego = await _context.Videojuegos.FindAsync(Id);
+            if (juego == null)
             {
-                _catalogo.Remove(juego);
+                return NotFound();
             }
+            _context.Videojuegos.Remove(juego);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

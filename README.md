@@ -1,6 +1,6 @@
 # GameVault
 
-Aplicación web desarrollada con **ASP.NET Core MVC** (.NET 10) que permite gestionar un catálogo de videojuegos. El proyecto implementa las operaciones básicas de un CRUD (Crear, Leer, Editar y Eliminar) sobre una lista de videojuegos almacenada en memoria.
+Aplicación web desarrollada con **ASP.NET Core MVC** (.NET 10) que permite gestionar un catálogo de videojuegos. El proyecto implementa las operaciones básicas de un CRUD (Crear, Leer, Editar y Eliminar) sobre una base de datos MySQL mediante Entity Framework Core.
 
 ## Descripción
 
@@ -19,6 +19,8 @@ A través de la interfaz web es posible listar los videojuegos del catálogo, ag
 
 - .NET 10
 - ASP.NET Core MVC
+- Entity Framework Core (Pomelo.EntityFrameworkCore.MySql)
+- MySQL
 - Razor Views (`.cshtml`)
 - Bootstrap (estilos en `wwwroot/lib/bootstrap`)
 - jQuery y jQuery Validation
@@ -53,7 +55,9 @@ GameVault/
    ```bash
    cd ASP.NET_Basico
    ```
-3. Ejecutar la aplicación:
+3. Configurar la conexión a MySQL en `appsettings.json` (cadena `ConexionMySql`).
+4. Crear la base de datos y la tabla (o ejecutar las migraciones correspondientes).
+5. Ejecutar la aplicación:
    ```bash
    dotnet run
    ```

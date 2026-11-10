@@ -29,17 +29,17 @@ namespace GameVault.Models
         [Required(ErrorMessage = "Debe indicar la fecha de lanzamiento del videojuego.")]
         [Range(1980, 2030, ErrorMessage = "El año debe estar entre 1980 y 2030")]
         [Display(Name = "Año de lanzamiento")]
-        public int Year { get; set; }
+        public int AnioLanzamiento { get; set; }
 
         public Videojuego(){ }
-        public Videojuego( int id, string titulo, string genero, string plataforma, double precio, int year)
+        public Videojuego( int id, string titulo, string genero, string plataforma, double precio, int anioLanzamiento)
         {
             this.Id = id;
             this.Titulo = titulo;
             this.Genero = genero;
             this.Plataforma = plataforma;
             this.Precio = precio;
-            this.Year = year;
+            this.AnioLanzamiento = anioLanzamiento;
         }
     }
 }
